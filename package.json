@@ -7,7 +7,9 @@
     "test": "test"
   },
   "keywords": [
-    "clean-different"
+    "clean_different",
+    "clean",
+    "different"
   ],
   "devDependencies": {
     "del": "3.0.0"

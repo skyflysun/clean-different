@@ -6,7 +6,7 @@ var path = require('path');
 var del = require('delete');
 
 
-let outPluginPath = 'plugin/www';
+let outPluginPath = 'clean-different/www';
 let pluginPath = 'plugin';
 
 
