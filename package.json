@@ -1,0 +1,17 @@
+{
+  "name": "clean-different",
+  "version": "1.0.0",
+  "description": "在打包完成后清除相同名称的文件",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "clean-different"
+  ],
+  "devDependencies": {
+    "del": "3.0.0"
+  },
+  "author": "TZH",
+  "license": "MIT"
+}
