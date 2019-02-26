@@ -27,13 +27,17 @@ function deleteAll(path) {
   }
 }
 class CopyFile{
-  constructor(obj){
-    this.assest = obj;
-    this.currentPath = path.resolve('./');
-    this.outPath = this.findOutpath(obj);
-    deleteAll(path.resolve('./')+ '/'+this.outPath[1] + 'out');
-    this.findFile(this.outPath[0]);
-
+  constructor(obj,options){
+    if(options == 'all'){
+      //什么都不做
+    }
+    else{
+      this.assest = obj;
+      this.currentPath = path.resolve('./');
+      this.outPath = this.findOutpath(obj);
+      deleteAll(path.resolve('./')+ '/'+this.outPath[1] + 'out');
+      this.findFile(this.outPath[0],options);
+    }
   }
 
 
@@ -46,7 +50,7 @@ class CopyFile{
     return [tempPath + '/' + data[1],data[1]];
   }
 
-  findFile(outPath){
+  findFile(outPath,options){
     let files = fs.readdirSync(outPath);
     files.forEach( file => {
       let tempPath = outPath + '/' + file;
@@ -55,16 +59,19 @@ class CopyFile{
           this.findFile( tempPath );
         }
         else {
-          this.copyOutputFile(tempPath);
           let pluginFileExistStatus = this.isExistFold( this.getOldPath(tempPath));
           if( !pluginFileExistStatus ){
+            //不存在文件夹
             this.copyFile(tempPath);
             return;
           }
           else{
+            //存在文件夹
             let oldFileObj = this.getOldFileObj(tempPath);
             let fileExist = oldFileObj.status;
+
             if(fileExist){
+              // 文件存在
               if(oldFileObj.oldFileName != 'index.html'){
                 this.compareFile(tempPath);
               }
@@ -89,12 +96,11 @@ class CopyFile{
     let fileName = filePathArr.pop();
     let filePath = filePathArr.join('/') + '/' + fileName;
     this.createFolder( filePath );
-    console.log( filePath );
     this.writeFile( filePath,this.readFile(toPath))
   }
 
   copyOutputFile(toPath){
-    let filePathArr = toPath.replace(new RegExp(this.outPath[1]), this.outPath[1]+'out').split('/');
+    let filePathArr = toPath.replace(new RegExp(this.outPath[1]), this.outPath[1]).split('/');
     let fileName = filePathArr.pop();
     let filePath = filePathArr.join('/') + '/' + fileName;
     this.createFolder( filePath );
@@ -102,8 +108,7 @@ class CopyFile{
   }
 
   writeFile( filePath,data ) {
-
-    fs.writeFileSync(filePath,data)
+    fs.writeFileSync(filePath,data);
   }
 
   createFolder( toPath ) {
@@ -127,7 +132,9 @@ class CopyFile{
     if( oldFileName == 'index.html') return;
     let newChunk = newFileName.split('.')[1];
     let oldChunk = oldFileName.split('.')[1];
-    if( oldChunk == newChunk ){
+    let oldName = oldFileName.split('.')[0]
+    let newName = newFileName.split('.')[0]
+    if( oldChunk == newChunk && oldName == newName  ){
       //删除发布文件夹一样的js;
       del.sync(filePath);
       this.delDir(filePath)
@@ -177,7 +184,8 @@ class CopyFile{
     let status = false;
     let oldFileName = 'index.html';
     files.some( tempFile => {
-      if( new RegExp(fileName,'g').test(tempFile)){
+      let tempName = tempFile.split('.').length < 3 ? tempFile : tempFile.split(".")[0];
+      if(tempName == fileName ){
         status = true;
         oldFileName = tempFile;
         return true
@@ -195,10 +203,14 @@ class CopyFile{
 
 
 class MyPlugin {
+  constructor(options){
+    this.options = options;
+  }
+
   apply (compiler) {
     // 绑定钩子事件
     compiler.hooks.afterEmit.tapAsync('MyPlugin', (compilation,callback) => {
-      new CopyFile( compilation.assets );
+      new CopyFile( compilation.assets,this.options );
       callback();
     })
   }

@@ -1,6 +1,6 @@
 {
   "name": "clean-different",
-  "version": "1.0.1",
+  "version": "1.0.5",
   "description": "在打包完成后清除相同名称的文件",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,7 @@
     "different"
   ],
   "devDependencies": {
-    "del": "3.0.0"
+    "delete": "^1.1.0"
   },
   "author": "TZH",
   "license": "MIT"
