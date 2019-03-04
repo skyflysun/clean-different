@@ -1,6 +1,6 @@
 {
   "name": "clean-different",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "在打包完成后清除相同名称的文件",
   "main": "index.js",
   "scripts": {
